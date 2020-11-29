@@ -39,7 +39,7 @@ fn impl_validate(ast: &syn::DeriveInput) -> proc_macro2::TokenStream {
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
     // The Validate trait implementation
-    let validate_trait_impl = if has_arg {
+    let validate_trait_impl = if !has_arg {
         quote!(
             impl #impl_generics ::validator::Validate for #ident #ty_generics #where_clause {
                 fn validate(&self) -> ::std::result::Result<(), ::validator::ValidationErrors> {
@@ -64,7 +64,6 @@ fn impl_validate(ast: &syn::DeriveInput) -> proc_macro2::TokenStream {
         #validate_trait_impl
 
         impl #impl_generics ::validator::ValidateArgs<'v_a> for #ident #ty_generics #where_clause {
-            // TODO
             type Args = #arg_type;
 
             #[allow(unused_mut)]
@@ -88,7 +87,7 @@ fn impl_validate(ast: &syn::DeriveInput) -> proc_macro2::TokenStream {
         }
     );
 
-    println!("{}", impl_ast.to_string());
+    // println!("{}", impl_ast.to_string());
 
     impl_ast
 }
@@ -150,7 +149,7 @@ fn construct_validator_argument_type(
             Validator::Custom { argument_type: Some(t), argument_access, .. } => {
                 *argument_access = Some(String::from(ARGS_PARAMETER_NAME));
                 let type_stream: Type = syn::parse_str(t.as_str()).unwrap();
-                (quote!(#type_stream), false)
+                (quote!(#type_stream), true)
             }
             _ => unreachable!(),
         }
@@ -180,7 +179,7 @@ fn construct_validator_argument_type(
             }
         });
 
-        (quote!((#params)), false)
+        (quote!((#params)), true)
     }
 }
 
