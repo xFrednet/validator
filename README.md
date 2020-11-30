@@ -144,16 +144,39 @@ validation functions and types.
 ## Validators
 The crate comes with some built-in validators and you can have several validators for a given field.
 
-### email
+<details>
+<summary><b>email</b></summary>
 Tests whether the String is a valid email according to the HTML5 regex, which means it will mark
 some esoteric emails as invalid that won't be valid in a `email` input as well.
 This validator doesn't take any arguments: `#[validate(email)]`.
 
-### url
-Tests whether the String is a valid URL.
-This validator doesn't take any arguments: `#[validate(url)]`;
+Example:
+```rust
+#[derive(Debug, Validate)]
+struct TestStruct {
+    #[validate(url)]
+    val: String,
+}
+```
+</details>
 
-### length
+<details>
+<summary><b>url</b></summary>
+Tests whether the String is a valid URL.
+This validator doesn't take any arguments: `#[validate(url)]`
+
+Example:
+```rust
+#[derive(Debug, Validate)]
+struct TestStruct {
+    #[validate(url)]
+    val: String,
+}
+```
+</details>
+
+<details>
+<summary><b>Length</b></summary>
 Tests whether a String or a Vec match the length requirement given. `length` has 3 integer arguments:
 
 - min
@@ -176,8 +199,10 @@ const MAX_CONST: u64 = 10;
 #[validate(length(equal = 10))]
 #[validate(length(min = "MIN_CONST", max = "MAX_CONST"))]
 ```
+</details>
 
-### range
+<details>
+<summary><b>range</b></summary>
 Tests whether a number is in the given range. `range` takes 1 or 2 arguments `min` and `max` that can be a number or a value path.
 
 Examples:
@@ -195,7 +220,10 @@ const MIN_CONSTANT: i32 = 0;
 #[validate(range(min = "crate::MAX_CONSTANT"))]
 ```
 
-### must_match
+</details>
+
+<details>
+<summary><b>must_match</b></summary>
 Tests whether the 2 fields are equal. `must_match` takes 1 string argument. It will error if the field
 mentioned is missing or has a different type than the field the attribute is on.
 
@@ -205,8 +233,10 @@ Examples:
 #[validate(must_match = "password2")]
 #[validate(must_match(other = "password2"))]
 ```
+</details>
 
-### contains
+<details>
+<summary><b>contains</b></summary>
 Tests whether the string contains the substring given or if a key is present in a hashmap. `contains` takes
 1 string argument.
 
@@ -217,12 +247,14 @@ Examples:
 #[validate(contains(pattern = "gmail"))]
 ```
 
-### regex
+</details>
+
+<details>
+<summary><b>regex</b></summary>
 Tests whether the string matches the regex given. `regex` takes
 1 string argument: the path to a static Regex instance.
 
 Examples:
-
 ```rust
 lazy_static! {
     static ref RE_TWO_CHARS: Regex = Regex::new(r"[a-z]{2}$").unwrap();
@@ -232,23 +264,31 @@ lazy_static! {
 #[validate(regex(path = "RE_TWO_CHARS"))]
 ```
 
-### credit\_card
+</details>
+
+<details>
+<summary><b>credit_card</b></summary>
 Test whether the string is a valid credit card number.
 
 Examples:
-
 ```rust
 #[validate(credit_card)]
 ```
 
-### phone
+</details>
+
+<details>
+<summary><b>phone</b></summary>
 Tests whether the String is a valid phone number (in international format, ie.
 containing the country indicator like `+14152370800` for an US number — where `4152370800`
 is the national number equivalent, which is seen as invalid).
 To use this validator, you must enable the `phone` feature for the `validator` crate.
 This validator doesn't take any arguments: `#[validate(phone)]`;
 
-### custom
+</details>
+
+<details>
+<summary><b>custom</b></summary>
 Calls one of your functions to perform a custom validation. The field will reference be given as a parameter to the function,
 which should return a `Result<(), ValidationError>`.
 
@@ -300,7 +340,10 @@ test_struct.validate_args(&mut database).is_ok();
 
 Custom validation with arguments doesn't work on nested validation. See [`validator_derive_tests/tests/custom.rs`](validator_derive_tests/custom.rs) and [`validator_derive_tests/tests/custom_args.rs`](validator_derive_tests/custom_args.rs) for more examples.
 
-### nested
+</details>
+
+<details>
+<summary><b>nested</b></summary>
 Performs validation on a field with a type that also implements the Validate trait (or a vector of such types).
 
 Examples:
@@ -308,17 +351,26 @@ Examples:
 ```rust
 #[validate]
 ```
+</details>
 
-### non_control_character
+<details>
+<summary><b>non_control_character</b></summary>
 Tests whether the String has any utf-8 control caracters, fails validation if it does.
 To use this validator, you must enable the `unic` feature for the `validor` crate.
 This validator doesn't take any arguments: `#[validate(non_control_character)]`;
 
-### required
+</details>
+
+<details>
+<summary><b>required</b></summary>
 Tests whether the `Option<T>` field is `Some`;
 
-### required_nested
+</details>
+
+<details>
+<summary><b>required_nested</b></summary>
 Tests whether the `Option<T>` field is `Some` and performs validation as `nested` do;
+</details>
 
 ## Struct level validation
 Often, some error validation can only be applied when looking at the full struct, here's how it works here:
@@ -382,14 +434,14 @@ For example, the following attributes all work:
 
 ### validator
 
-## 0.12.0 (2020/11/26)
+#### 0.12.0 (2020/11/26)
 
 - Allow `length` and `range` validators to take a reference to a variable
 - Make validator work with `Option<Vec<_>>`
 - Support reference for length types
 - Fix `phone`, `unic` and `card` feature to actually work
 
-## 0.11.0 (2020/09/09)
+#### 0.11.0 (2020/09/09)
 
 - Add a `derive` feature so you don't need to add `validator_derive` to your `Cargo.toml`
 
